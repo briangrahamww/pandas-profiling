@@ -7,13 +7,13 @@ from tqdm.auto import tqdm
 from visions import VisionsTypeset
 
 from pandas_profiling.config import Settings
+from pandas_profiling.model.alerts import get_alerts
 from pandas_profiling.model.correlations import (
     calculate_correlation,
     get_active_correlations,
 )
 from pandas_profiling.model.dataframe import check_dataframe, preprocess
 from pandas_profiling.model.duplicates import get_duplicates
-from pandas_profiling.model.messages import get_messages
 from pandas_profiling.model.missing import get_missing_active, get_missing_diagram
 from pandas_profiling.model.pairwise import get_scatter_plot, get_scatter_tasks
 from pandas_profiling.model.sample import get_custom_sample, get_sample
@@ -46,7 +46,7 @@ def describe(
             - variables: descriptions per series.
             - correlations: correlation matrices.
             - missing: missing value diagrams.
-            - messages: direct special attention to these patterns in your data.
+            - alerts: direct special attention to these patterns in your data.
             - package: package details.
     """
 
@@ -146,7 +146,7 @@ def describe(
         )
         table_stats.update(metrics)
 
-        messages = progress(get_messages, pbar, "Get messages/warnings")(
+        alerts = progress(get_alerts, pbar, "Get alerts")(
             config, table_stats, series_description, correlations
         )
 
@@ -181,8 +181,8 @@ def describe(
         "correlations": correlations,
         # Missing values
         "missing": missing,
-        # Warnings
-        "messages": messages,
+        # Alerts
+        "alerts": alerts,
         # Package
         "package": package,
         # Sample
